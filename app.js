@@ -103,7 +103,7 @@ function formulaTriad(type) {
   if (type === "major") return "0 +4 +7";
   if (type === "minor") return "0 +3 +7";
   if (type === "dim") return "0 +3 +6";
-  return "Formule spéciale";
+  return "à définir";
 }
 
 function formulaSeventh(type) {
@@ -112,7 +112,7 @@ function formulaSeventh(type) {
   if (type === "minor") return "0 +3 +7 +10";
   if (type === "halfdim") return "0 +3 +6 +10";
   if (type === "dim7") return "0 +3 +6 +9";
-  return "Formule spéciale";
+  return "à définir";
 }
 
 function generateScale() {
