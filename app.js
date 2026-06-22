@@ -1,174 +1,212 @@
-const notes = [
-  "C", "C#", "D", "Eb", "E", "F",
-  "F#", "G", "Ab", "A", "Bb", "B"
-];
+const notes = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
 
 const modes = {
   "Mineur naturel": {
-    intervals: [0, 2, 3, 5, 7, 8, 10],
-    degrees: ["1", "2", "b3", "4", "5", "b6", "b7"],
-    signature: "b3, b6, b7",
-    color: "Sombre, mélancolique, cinématographique"
+    intervals:[0,2,3,5,7,8,10],
+    degrees:["1","2","b3","4","5","b6","b7"],
+    chords:["m","dim","","m","m","",""]
   },
-
   "Majeur": {
-    intervals: [0, 2, 4, 5, 7, 9, 11],
-    degrees: ["1", "2", "3", "4", "5", "6", "7"],
-    signature: "3, 6, 7",
-    color: "Lumineux, stable, ouvert"
+    intervals:[0,2,4,5,7,9,11],
+    degrees:["1","2","3","4","5","6","7"],
+    chords:["","m","m","","","m","dim"]
   },
-
   "Dorien": {
-    intervals: [0, 2, 3, 5, 7, 9, 10],
-    degrees: ["1", "2", "b3", "4", "5", "6", "b7"],
-    signature: "6 majeure",
-    color: "Mineur noble, mélancolique mais lumineux"
+    intervals:[0,2,3,5,7,9,10],
+    degrees:["1","2","b3","4","5","6","b7"],
+    chords:["m","m","","","m","dim",""]
   },
-
   "Phrygien": {
-    intervals: [0, 1, 3, 5, 7, 8, 10],
-    degrees: ["1", "b2", "b3", "4", "5", "b6", "b7"],
-    signature: "b2",
-    color: "Mystique, sombre, oriental, menaçant"
+    intervals:[0,1,3,5,7,8,10],
+    degrees:["1","b2","b3","4","5","b6","b7"],
+    chords:["m","","","m","dim","","m"]
   },
-
   "Lydien": {
-    intervals: [0, 2, 4, 6, 7, 9, 11],
-    degrees: ["1", "2", "3", "#4", "5", "6", "7"],
-    signature: "#4",
-    color: "Magique, céleste, lumineux, flottant"
+    intervals:[0,2,4,6,7,9,11],
+    degrees:["1","2","3","#4","5","6","7"],
+    chords:["","","m","dim","","m","m"]
   },
-
   "Mixolydien": {
-    intervals: [0, 2, 4, 5, 7, 9, 10],
-    degrees: ["1", "2", "3", "4", "5", "6", "b7"],
-    signature: "b7",
-    color: "Héroïque, aventure, triomphant"
+    intervals:[0,2,4,5,7,9,10],
+    degrees:["1","2","3","4","5","6","b7"],
+    chords:["","m","dim","","m","m",""]
   },
-
   "Mineur harmonique": {
-    intervals: [0, 2, 3, 5, 7, 8, 11],
-    degrees: ["1", "2", "b3", "4", "5", "b6", "7"],
-    signature: "7 majeure",
-    color: "Dramatique, tragique, épique, tension"
+    intervals:[0,2,3,5,7,8,11],
+    degrees:["1","2","b3","4","5","b6","7"],
+    chords:["m","dim","aug","m","","","dim"]
   }
 };
 
-function noteAt(rootIndex, interval) {
+const bridges = {
+  "E Phrygien": [
+    {
+      target: "A Mineur naturel",
+      type: "Fluide",
+      notes: ["E","F","G","A","B","C","D"],
+      pivotChords: ["Am","C","Dm","Em","F","G"]
+    },
+    {
+      target: "C Majeur",
+      type: "Fluide",
+      notes: ["E","F","G","A","B","C","D"],
+      pivotChords: ["C","Dm","Em","F","G","Am"]
+    },
+    {
+      target: "D Dorien",
+      type: "Cinématique",
+      notes: ["E","F","G","A","B","C","D"],
+      pivotChords: ["Dm","Em","F","G","Am"]
+    }
+  ],
+
+  "E Mineur naturel": [
+    {
+      target: "G Majeur",
+      type: "Fluide",
+      notes: ["E","F#","G","A","B","C","D"],
+      pivotChords: ["Em","G","Am","Bm","C","D"]
+    },
+    {
+      target: "A Dorien",
+      type: "Cinématique",
+      notes: ["E","F#","G","A","B","C","D"],
+      pivotChords: ["Em","G","Am","Bm","D"]
+    },
+    {
+      target: "B Phrygien",
+      type: "Mystique",
+      notes: ["E","F#","G","A","B","C","D"],
+      pivotChords: ["Em","G","Am","Bm","C"]
+    }
+  ],
+
+  "G Mineur naturel": [
+    {
+      target: "Bb Majeur",
+      type: "Fluide",
+      notes: ["G","A","Bb","C","D","Eb","F"],
+      pivotChords: ["Gm","Bb","Cm","Dm","Eb","F"]
+    },
+    {
+      target: "C Dorien",
+      type: "Cinématique",
+      notes: ["G","A","Bb","C","D","Eb","F"],
+      pivotChords: ["Gm","Bb","Cm","Dm","F"]
+    },
+    {
+      target: "D Phrygien",
+      type: "Sombre",
+      notes: ["G","A","Bb","C","D","Eb","F"],
+      pivotChords: ["Gm","Bb","Cm","Dm","Eb"]
+    }
+  ]
+};
+
+function noteAt(rootIndex, interval){
   return notes[(rootIndex + interval) % 12];
 }
 
-function chordName(root, type) {
-  if (type === "major") return root;
-  if (type === "minor") return root + "m";
-  if (type === "dim") return root + "dim";
+function chordName(root, quality){
+  if(quality === "m") return root + "m";
+  if(quality === "dim") return root + "dim";
+  if(quality === "aug") return root + "aug";
   return root;
 }
 
-function seventhName(root, type) {
-  if (type === "major") return root + "maj7";
-  if (type === "minor") return root + "m7";
-  if (type === "dominant") return root + "7";
-  if (type === "halfdim") return root + "m7b5";
-  if (type === "dim7") return root + "dim7";
-  return root + "7";
+function seventhName(root, quality){
+  if(quality === "m") return root + "m7";
+  if(quality === "dim") return root + "m7b5";
+  if(quality === "aug") return root + "augMaj7";
+  return root + "maj7";
 }
 
-function detectTriad(intervals) {
-  const third = (intervals[2] - intervals[0] + 12) % 12;
-  const fifth = (intervals[4] - intervals[0] + 12) % 12;
-
-  if (third === 4 && fifth === 7) return "major";
-  if (third === 3 && fifth === 7) return "minor";
-  if (third === 3 && fifth === 6) return "dim";
-
-  return "unknown";
+function formulaTriad(quality){
+  if(quality === "m") return "0 +3 +7";
+  if(quality === "dim") return "0 +3 +6";
+  if(quality === "aug") return "0 +4 +8";
+  return "0 +4 +7";
 }
 
-function detectSeventh(intervals) {
-  const third = (intervals[2] - intervals[0] + 12) % 12;
-  const fifth = (intervals[4] - intervals[0] + 12) % 12;
-  const seventh = (intervals[6] - intervals[0] + 12) % 12;
-
-  if (third === 4 && fifth === 7 && seventh === 11) return "major";
-  if (third === 4 && fifth === 7 && seventh === 10) return "dominant";
-  if (third === 3 && fifth === 7 && seventh === 10) return "minor";
-  if (third === 3 && fifth === 6 && seventh === 10) return "halfdim";
-  if (third === 3 && fifth === 6 && seventh === 9) return "dim7";
-
-  return "unknown";
+function formulaSeventh(quality){
+  if(quality === "m") return "0 +3 +7 +10";
+  if(quality === "dim") return "0 +3 +6 +10";
+  if(quality === "aug") return "0 +4 +8 +11";
+  return "0 +4 +7 +11";
 }
 
-function formulaTriad(type) {
-  if (type === "major") return "0 +4 +7";
-  if (type === "minor") return "0 +3 +7";
-  if (type === "dim") return "0 +3 +6";
-  return "à définir";
-}
-
-function formulaSeventh(type) {
-  if (type === "major") return "0 +4 +7 +11";
-  if (type === "dominant") return "0 +4 +7 +10";
-  if (type === "minor") return "0 +3 +7 +10";
-  if (type === "halfdim") return "0 +3 +6 +10";
-  if (type === "dim7") return "0 +3 +6 +9";
-  return "à définir";
-}
-
-function generateScale() {
+function generateScale(){
   const root = document.getElementById("root").value;
   const modeName = document.getElementById("mode").value;
 
   const rootIndex = notes.indexOf(root);
   const mode = modes[modeName];
-  const intervals = mode.intervals;
 
-  const scale = intervals.map(interval => noteAt(rootIndex, interval));
+  const scale = mode.intervals.map(interval => noteAt(rootIndex, interval));
 
-  let chordsHtml = "";
+  let chordsHTML = "";
 
-  for (let i = 0; i < 7; i++) {
-    const triadIndexes = [i, i + 2, i + 4].map(n => n % 7);
-    const seventhIndexes = [i, i + 2, i + 4, i + 6].map(n => n % 7);
+  for(let i = 0; i < scale.length; i++){
+    const quality = mode.chords[i];
 
-    const triadNotes = triadIndexes.map(index => scale[index]);
-    const seventhNotes = seventhIndexes.map(index => scale[index]);
+    const triad = [
+      scale[i],
+      scale[(i+2)%7],
+      scale[(i+4)%7]
+    ];
 
-    const triadIntervals = triadIndexes.map(index => intervals[index]);
-    const seventhIntervals = seventhIndexes.map(index => intervals[index]);
+    const seventh = [
+      scale[i],
+      scale[(i+2)%7],
+      scale[(i+4)%7],
+      scale[(i+6)%7]
+    ];
 
-    const triadType = detectTriad(triadIntervals);
-    const seventhType = detectSeventh(seventhIntervals);
-
-    const triad = chordName(triadNotes[0], triadType);
-    const seventh = seventhName(seventhNotes[0], seventhType);
-
-    chordsHtml += `
-      <div class="chord-card">
-        <h3>${triad}</h3>
-        <p><strong>Triade :</strong> ${triadNotes.join(" - ")}</p>
-        <p><strong>Formule :</strong> ${formulaTriad(triadType)}</p>
-
-        <h4>${seventh}</h4>
-        <p><strong>7e :</strong> ${seventhNotes.join(" - ")}</p>
-        <p><strong>Formule :</strong> ${formulaSeventh(seventhType)}</p>
+    chordsHTML += `
+      <div style="margin-bottom:18px;">
+        <h3>${chordName(scale[i], quality)}</h3>
+        <p><strong>Triade :</strong> ${triad.join(" - ")}</p>
+        <p><strong>Formule :</strong> ${formulaTriad(quality)}</p>
+        <p><strong>7e :</strong> ${seventhName(scale[i], quality)} = ${seventh.join(" - ")}</p>
+        <p><strong>Formule 7e :</strong> ${formulaSeventh(quality)}</p>
       </div>
+    `;
+  }
+
+  const bridgeKey = `${root} ${modeName}`;
+  let bridgesHTML = "";
+
+  if(bridges[bridgeKey]){
+    bridgesHTML = `<h2>🌉 Ponts possibles</h2>`;
+
+    bridges[bridgeKey].forEach(bridge => {
+      bridgesHTML += `
+        <div style="margin-bottom:18px;">
+          <h3>${bridge.type} → ${bridge.target}</h3>
+          <p><strong>Notes pivot :</strong> ${bridge.notes.join(" - ")}</p>
+          <p><strong>Accords pivot :</strong> ${bridge.pivotChords.join(" - ")}</p>
+        </div>
+      `;
+    });
+  } else {
+    bridgesHTML = `
+      <h2>🌉 Ponts possibles</h2>
+      <p>Pas encore défini pour cette gamme. On l'ajoutera dans ORBIT V0.4.</p>
     `;
   }
 
   document.getElementById("result").innerHTML = `
     <h2>${root} ${modeName}</h2>
 
-    <p><strong>Couleur :</strong> ${mode.color}</p>
-    <p><strong>Note / degré signature :</strong> ${mode.signature}</p>
-
-    <h3>Notes</h3>
+    <p><strong>Notes :</strong></p>
     <p>${scale.join(" - ")}</p>
 
-    <h3>Degrés</h3>
+    <p><strong>Degrés :</strong></p>
     <p>${mode.degrees.join(" - ")}</p>
 
-    <h3>Accords de la gamme</h3>
-    ${chordsHtml}
+    <h2>Accords de la gamme</h2>
+    ${chordsHTML}
+
+    ${bridgesHTML}
   `;
 }
