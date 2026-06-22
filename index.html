@@ -1,71 +1,65 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ORBIT</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ORBIT</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
+
 <body>
 
 <div class="container">
 
-    <h1>🌌 ORBIT</h1>
-    <p>Atlas émotionnel de composition</p>
+<h1>🌌 ORBIT</h1>
 
-    <h2>Émotion</h2>
+<p>Atlas émotionnel de composition musicale</p>
 
-    <select id="emotion">
-        <option>Sombre</option>
-        <option>Action</option>
-        <option>Tension</option>
-        <option>Épique</option>
-        <option>Tragique</option>
-        <option>Mélancolie</option>
-        <option>Émotionnel</option>
-        <option>Espoir</option>
-        <option>Lumineux</option>
-        <option>Joyeux</option>
-        <option>Mystique</option>
-        <option>Triomphant</option>
-    </select>
+<h2>Mode</h2>
 
-    <h2>Mode</h2>
+<select id="mode">
 
-    <select id="mode">
-        <option>Mineur naturel</option>
-        <option>Majeur</option>
-        <option>Dorien</option>
-        <option>Phrygien</option>
-        <option>Lydien</option>
-        <option>Mixolydien</option>
-        <option>Mineur harmonique</option>
-    </select>
+<option>Mineur naturel</option>
+<option>Majeur</option>
+<option>Dorien</option>
+<option>Phrygien</option>
+<option>Lydien</option>
+<option>Mixolydien</option>
+<option>Mineur harmonique</option>
 
-    <h2>Fondamentale</h2>
+</select>
 
-    <select id="root">
-        <option>C</option>
-        <option>C#</option>
-        <option>D</option>
-        <option>Eb</option>
-        <option>E</option>
-        <option>F</option>
-        <option>F#</option>
-        <option>G</option>
-        <option>Ab</option>
-        <option>A</option>
-        <option>Bb</option>
-        <option>B</option>
-    </select>
+<h2>Fondamentale</h2>
 
-    <br><br>
+<select id="root">
 
-    <button onclick="generateScale()">
-        Générer
-    </button>
+<option>C</option>
+<option>C#</option>
+<option>D</option>
+<option>Eb</option>
+<option>E</option>
+<option>F</option>
+<option>F#</option>
+<option>G</option>
+<option>Ab</option>
+<option>A</option>
+<option>Bb</option>
+<option>B</option>
 
-    <div id="result"></div>
+</select>
+
+<br><br>
+
+<button onclick="generateScale()">
+
+Générer la gamme
+
+</button>
+
+<div id="result"></div>
 
 </div>
 
